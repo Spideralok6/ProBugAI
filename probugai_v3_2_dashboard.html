@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProBugAI v3.2 - Ultimate Resilience Edition</title>
+    <style>
+        /* Base Styling and Variables for Dark Hacker Theme (Exact matches as original) */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-purple: #bc8cff;
+            --accent-success: #2ea44f;
+            --accent-warning: #d29922;
+            --accent-danger: #f85149;
+            --border-color: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1 span {
+            color: var(--accent-purple);
+        }
+
+        .badge {
+            background-color: var(--bg-tertiary);
+            color: var(--accent-purple);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            flex: 1;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            color: #fff;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        input, select, textarea {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-purple);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .api-box {
+            background: linear-gradient(145deg, #1f1b2d, #161b22);
+            border: 1px solid #4c2e80;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background-color: var(--accent-purple);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 15px;
+        }
+
+        pre {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 13px;
+            color: #e6edf3;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 300px;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .status-indicator {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status-local { background-color: #23341f; color: #7ee787; }
+        .status-ai { background-color: #26354a; color: #58a6ff; }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-purple);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        /* Console Terminal Output for Smart Routing Logs */
+        .terminal-box {
+            background-color: #040406;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            color: #7ee787;
+            max-height: 120px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .terminal-line {
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .terminal-time { color: var(--accent-purple); margin-right: 8px; }
+        .terminal-warn { color: var(--accent-warning); }
+        .terminal-err { color: var(--accent-danger); }
+        .terminal-ok { color: var(--accent-success); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🤖 ProBugAI <span>v3.2 Resilience Edition</span></h1>
+        <div class="badge">Automatic Retry & Smart Failover</div>
+    </header>
+
+    <div class="container">
+        <!-- Input Panel Form -->
+        <div class="panel">
+            <div class="panel-title">
+                <span>1. Bug Configuration (Inputs)</span>
+                <span id="mode-status" class="status-indicator status-local">Local Engine</span>
+            </div>
+            
+            <!-- Google Gemini Integration Box -->
+            <div class="api-box">
+                <div class="form-group">
+                    <label for="api-key" style="color: var(--accent-purple); font-weight: bold;">🔑 Google Gemini API Key (Optional)</label>
+                    <input type="password" id="api-key" placeholder="AI activation ke liye apni key paste karein..." oninput="checkEngineMode()">
+                    <span class="hint">Agar model busy (503) hoga, toh system automatic sequential backup models check karega!</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bug-type">Vulnerability / Bug Name</label>
+                <input type="text" id="bug-type" placeholder="e.g., Cross-Site Scripting, RCE, IDOR" value="Cross-Site Scripting (XSS)">
+            </div>
+
+            <div class="form-group">
+                <label for="target-url">Target Endpoint URL</label>
+                <input type="text" id="target-url" placeholder="https://target.com/api" value="https://example.com/api/v1/profile">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="severity">Severity</label>
+                    <select id="severity">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="param">Vulnerable Parameter</label>
+                    <input type="text" id="param" value="username">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="auth-type">Authentication Status</label>
+                    <select id="auth-type">
+                        <option value="Unauthenticated / Public Access" selected>Unauthenticated / Pre-Auth</option>
+                        <option value="Authenticated (Standard User Role)">Authenticated (User)</option>
+                        <option value="Authenticated (High-Privilege Admin)">Authenticated (Admin)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="impact-summary">Target Business Impact Area</label>
+                    <select id="impact-summary">
+                        <option value="Sensitive PII Leakage / Data Privacy Violation" selected>PII & Data Leakage</option>
+                        <option value="Full Account Takeover / Authorization Bypass">Account Takeover</option>
+                        <option value="Server Compromise / Cloud Secrets Exposure">Server & Cloud Exposure</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="steps">Rough Steps / How you found it</label>
+                <textarea id="steps" placeholder="Rough steps yahan likhein...">1. Profile settings page par jayein.
+2. Username parameter me apna malicious payload HTML string inject karein.
+3. Submit karte hi browser page par payload instantly bina escape ya encode hue execute ho jata hai.</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="poc">Payload / Proof of Concept</label>
+                <textarea id="poc" placeholder="Enter payload string..." style="font-family: monospace;"><script>alert(document.cookie)</script></textarea>
+            </div>
+
+            <button class="btn" id="gen-btn" onclick="processReportGeneration()">Generate Report 🔥</button>
+        </div>
+
+        <!-- Output Panel Markdown Display -->
+        <div class="panel">
+            <div class="panel-title">2. Compiled Pro-Level Report</div>
+            <pre id="report-output">Form fill karke 'Generate Report' par click karein...</pre>
+            
+            <div class="output-actions">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="copyToClipboard()">📋 Copy Report</button>
+                <button class="btn" style="flex: 1; background-color: var(--accent-purple);" onclick="downloadReport()">💾 Save Markdown (.md)</button>
+            </div>
+
+            <!-- Smart Routing Live Dashboard Console -->
+            <div class="form-group" style="margin-top: 15px;">
+                <label style="color: var(--accent-purple); font-weight: bold; font-size: 12px; display: flex; justify-content: space-between;">
+                    <span>🛡️ Live Smart Routing Engine Logs</span>
+                    <span style="color: var(--text-muted); cursor: pointer;" onclick="clearLogs()">[Clear Logs]</span>
+                </label>
+                <div class="terminal-box" id="terminal-logs">
+                    <div class="terminal-line"><span class="terminal-time">[SYS]</span> System ready. Waiting for API instructions...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notif">Action completed successfully!</div>
+
+    <script>
+        // Check dynamically if API key is present
+        function checkEngineMode() {
+            const key = document.getElementById("api-key").value.trim();
+            const status = document.getElementById("mode-status");
+            if(key.length > 10) {
+                status.innerText = "Gemini AI Live Engine";
+                status.className = "status-indicator status-ai";
+                addLog("API key detected. Live intelligence fallback routing initialized.", "ok");
+            } else {
+                status.innerText = "Local Engine";
+                status.className = "status-indicator status-local";
+            }
+        }
+
+        // Output helper to print dynamic logs to simulated server console terminal box
+        function addLog(message, status = "info") {
+            const logsDiv = document.getElementById("terminal-logs");
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            
+            let classVal = "";
+            if (status === "warn") classVal = "terminal-warn";
+            else if (status === "err") classVal = "terminal-err";
+            else if (status === "ok") classVal = "terminal-ok";
+
+            logsDiv.innerHTML += `<div class="terminal-line"><span class="terminal-time">[${timeStr}]</span><span class="${classVal}">${message}</span></div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById("terminal-logs").innerHTML = `<div class="terminal-line"><span class="terminal-time">[SYS]</span> Logs cleared. System ready.</div>`;
+        }
+
+        // Automatic API Failover call mechanism with retry loop
+        async function makeGeminiCall(apiKey, modelName, prompt, attemptNo) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            addLog(`Calling model '${modelName}' [Attempt ${attemptNo}/2]...`, "info");
+            
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+            return response;
+        }
+
+        // Process generation using local templates or dynamic multi-model Gemini fallbacks
+        async function processReportGeneration() {
+            const btn = document.getElementById("gen-btn");
+            const output = document.getElementById("report-output");
+            const apiKey = document.getElementById("api-key").value.trim();
+
+            const bugName = document.getElementById("bug-type").value;
+            const targetUrl = document.getElementById("target-url").value;
+            const severity = document.getElementById("severity").value;
+            const param = document.getElementById("param").value;
+            const auth = document.getElementById("auth-type").value;
+            const impactArea = document.getElementById("impact-summary").value;
+            const steps = document.getElementById("steps").value;
+            const poc = document.getElementById("poc").value;
+
+            if (apiKey.length > 10) {
+                btn.innerText = "AI Processing... Please wait...";
+                btn.disabled = true;
+                output.textContent = "Smart Routing Engine processing. Please monitor the logs below...";
+                addLog("Starting report compilation under resilience configuration...", "info");
+
+                const prompt = `You are an elite Senior Bug Bounty Triager and Cybersecurity VAPT expert.
+Convert the following raw bug hunter findings into a professional, high-priority markdown vulnerability report.
+
+CRITICAL INSTRUCTIONS:
+1. HARDEN THE IMPACT PROOF: Do NOT say abstract phrases like "${bugName} is dangerous". Write a devastating real-world impact statement focusing on ${impactArea} in the context of ${auth}.
+2. REMEDIATION: Write actual, production-ready secure code defense strategy examples for developers.
+
+RAW FINDINGS PROVIDED BY HUNTER:
+- Bug Name: ${bugName}
+- Target Vulnerable URL: ${targetUrl}
+- Parameter Affected: ${param}
+- Security Session Context: ${auth}
+- Primary Threat Focus: ${impactArea}
+- Steps to Reproduce: ${steps}
+- Proof of Concept / Payload: ${poc}
+
+Return only the final clean markdown text report. Start with '# [BUG REPORT]'.`;
+
+                // Order of models to automatically fallback to if one 503s or fails
+                const modelsToTry = [
+                    "gemini-2.5-flash",       // Active high speed default model
+                    "gemini-2.5-pro",         // Strong backup with deep understanding
+                    "gemini-1.5-pro",         // Robust legacy backup
+                    "gemini-1.5-flash"        // Ultimate safety backup
+                ];
+
+                let success = false;
+                let lastErrorMsg = "";
+
+                for (let i = 0; i < modelsToTry.length; i++) {
+                    const model = modelsToTry[i];
+                    
+                    // Run up to 2 retries per model if 503 is returned
+                    for (let attempt = 1; attempt <= 2; attempt++) {
+                        try {
+                            const response = await makeGeminiCall(apiKey, model, prompt, attempt);
+                            
+                            if (response.status === 503) {
+                                addLog(`Model '${model}' returned 503: Busy/High Demand. Waiting for retry...`, "warn");
+                                if (attempt < 2) {
+                                    await new Promise(resolve => setTimeout(resolve, 2000)); // wait 2s
+                                    continue;
+                                }
+                            }
+
+                            const data = await response.json();
+
+                            if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
+                                output.textContent = data.candidates[0].content.parts[0].text;
+                                success = true;
+                                addLog(`Successfully processed report using '${model}'!`, "ok");
+                                break; 
+                            } else {
+                                const errDesc = data.error ? data.error.message : JSON.stringify(data);
+                                lastErrorMsg = `[${model}] Error: ${errDesc}`;
+                                addLog(`Model '${model}' failed: ${errDesc.substring(0, 50)}...`, "err");
+                            }
+                        } catch (error) {
+                            lastErrorMsg = `[${model}] Connection error: ${error.message}`;
+                            addLog(`Network connection error with ${model}.`, "err");
+                        }
+                    }
+
+                    if (success) break; // Exit model fallback loop if successful
+                }
+
+                if (!success) {
+                    addLog("All active models exhausted or rate-limited.", "err");
+                    output.textContent = `❌ ERROR: All Gemini models returned high demand / rate limits (503 Status Code).\\n\\nLast Error logged:\\n${lastErrorMsg}\\n\\n💡 Quick Fix Checklist:\\n1. Google's Free AI Studio keys occasionally face regional spikes. Try rotated API key.\\n2. Turn on/off your VPN to change regional servers.\\n3. Delete the API key box contents completely to run instant offline reports locally!`;
+                }
+
+                btn.innerText = "Generate Report 🔥";
+                btn.disabled = false;
+
+            } else {
+                // Local Fallback Engine (No API key present)
+                addLog("No API key provided. Using built-in offline generation template.", "warn");
+                output.textContent = `# [BUG REPORT] Professional Triager Submission
+
+## 📄 Summary
+* **Vulnerability Type:** ${bugName}
+* **Target Endpoint:** \`${targetUrl}\`
+* **Vulnerable Parameter:** \`${param}\`
+* **Severity Rating:** **${severity}**
+* **Access Scope Required:** \`${auth}\`
+* **Identified Critical Impact:** \`${impactArea}\`
+
+---
+
+## 🔍 Vulnerability Description
+A standard structural defect matching ${bugName} has been identified in the application layer. The system fails to sanitize input traveling through parameter \`${param}\` within the context of \`${auth}\`.
+
+---
+
+## 🛑 Real-World Impact Proof (Harden Strategy)
+An attacker can exploit this structural ${bugName} configuration to trigger unauthorized actions targeting ${impactArea}. This completely bypasses standard authentication boundaries, potentially leading directly to full session hijacking, account takeover, or arbitrary client control.
+
+---
+
+## 🛠️ Steps to Reproduce
+${steps}
+
+---
+
+## 💻 Proof of Concept (PoC Data / Payloads)
+\`\`\`http
+${poc}
+\`\`\`
+
+---
+
+## 🛡️ Developer Secure Remediation Guide
+Implement zero-trust structural input sanitation filters, enforce strict content security validation policies, and apply context-aware encoding schemas. Ensure transport and endpoint boundaries are securely established at production nodes.
+
+---
+*Report generated via ProBugAI Local Template Engine. Provide Gemini Key for tailor-made deep AI reports.*`;
+                addLog("Local report templates rendered instantly.", "ok");
+            }
+        }
+
+        // Custom non-blocking copy function
+        function copyToClipboard() {
+            const text = document.getElementById("report-output").textContent;
+            if(text.startsWith("Form fill")) return;
+            
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempTextArea);
+
+            const notif = document.getElementById("notif");
+            notif.innerText = "Report copied to clipboard!";
+            notif.style.display = "block";
+            setTimeout(() => { notif.style.display = "none"; }, 2500);
+        }
+
+        // Save report dynamically as a file download
+        function downloadReport() {
+            const text = document.getElementById("report-output").textContent;
+            if(text.startsWith("Form fill")) return;
+            const blob = new Blob([text], { type: "text/markdown" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "Pro_Bug_Bounty_Report.md";
+            a.click();
+        }
+    </script>
+</body>
+</html>
